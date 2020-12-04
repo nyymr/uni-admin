@@ -23,7 +23,7 @@
               <el-avatar
                 src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
                 size="small"
-                style="margin: 0 10px"
+                style="margin: 0 5px"
               ></el-avatar>
               <span>{{ username }}</span>
             </template>
@@ -35,7 +35,7 @@
         <el-aside width="200px">
           <el-menu
             :default-active="$route.path"
-            text-color="#909399"
+            text-color="#000"
             active-text-color="#008080"
             class="el-menu-vertical-demo"
             router
@@ -60,6 +60,7 @@
   </div>
 </template>
 <script>
+
 function setSectionHeight() {
   let section = document.getElementsByTagName("section")[1];
   section.style.height = document.documentElement.clientHeight - 60 + "px";
@@ -86,7 +87,14 @@ export default {
     username() {
       return this.$store.state.userInfo.username;
     },
-    
+  },
+  watch: {
+    "$route.path": function (val) {
+      if (val == "/index") {
+        this.active = "0";
+        this.$storage.setActive(this.active);
+      }
+    },
   },
   mounted() {
     setSectionHeight();

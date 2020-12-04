@@ -11,6 +11,7 @@ export default new Vuex.Store({
   state: {
     userInfo: storage.readUserInfo() || {},
     token: storage.getToken() || "",
+    rule: storage.readRule() || [],
   },
   mutations: {
     //保存用户信息
@@ -25,8 +26,15 @@ export default new Vuex.Store({
     },
     //清空vuex
     clearVueX(state) {
-      state.userInfo = {};
-      state.token = null;
+      // state.userInfo = {};
+      // state.token = null;
+      // state.rule = [];
+      state = {}
+    },
+    //保存
+    setRule(state, val) {
+      state.rule = val;
+      storage.saveRule(state.rule)
     }
   },
   actions: {
@@ -36,16 +44,22 @@ export default new Vuex.Store({
     changeSetUser({ commit }, user) {
       commit("setUserInfo", user);
     },
+    changeSetRule({ commit }, rule) {
+      commit("setRule", rule);
+    },
     clearVueX({ commit }) {
       commit("clearVueX");
     }
   },
   getters: {
     getRules(state) {
-      return state.userInfo.ruleNames
+      return state.userInfo.ruleNames;
+    },
+    getRule(state) {
+      return state.rule;
     }
   },
   modules: {
-    
+
   }
 });

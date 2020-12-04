@@ -83,6 +83,7 @@ export default {
             let token = res.data.token;
             this.$store.dispatch("changeSetUser", res.data);
             this.$store.dispatch("changeSetToken", token);
+            this.$store.dispatch("changeSetRule", res.data.role.rules);
             this.$router.push({ path: "/" });
           }
         })

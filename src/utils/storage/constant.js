@@ -1,5 +1,6 @@
 export default {
     TOKEN: "token",
     USERINFO: "userInfo",
-    ACTIVE: "active"
+    ACTIVE: "active",
+    RULE: "rule"
 }

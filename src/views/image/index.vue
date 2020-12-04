@@ -58,7 +58,7 @@
       </el-header>
       <!-- 图片上传弹窗 -->
       <!-- ==================================================================================================================== -->
-      <el-dialog title="收货地址" :visible.sync="upload.show">
+      <el-dialog title="图片上传" :visible.sync="upload.show">
         <div class="upload-wrapper w-100 text-center">
           <el-upload
             class="upload-demo"

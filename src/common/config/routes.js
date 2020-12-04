@@ -20,43 +20,43 @@ const routes = [
             //商品列表
             {
                 component: "shop/goods/list",
-                meta:{
-                    title:"商品列表"
+                meta: {
+                    title: "商品列表"
                 }
             },
             //商品分类
             {
                 component: "shop/category/list",
                 meta: {
-                    title: "商品分类"
+                    title: "分类管理"
                 }
             },
             //商品规格
             {
                 component: "shop/sku/list",
                 meta: {
-                    title: "商品规格"
+                    title: "商品规格管理"
                 }
             },
             //商品类型
             {
                 component: "shop/type/list",
                 meta: {
-                    title: "商品类型"
+                    title: "商品类型管理"
                 }
             },
             //商品评价
             {
                 component: "shop/comment/list",
                 meta: {
-                    title: "商品评价"
+                    title: "商品评价管理"
                 }
             },
             //订单管理
             {
                 component: "order/order/list",
                 meta: {
-                    title: "订单管理"
+                    title: "订单列表"
                 }
             },
             //发票管理
@@ -122,6 +122,10 @@ const routes = [
         component: "login/index"
     },
     //404处理
+    {
+        component: "404"
+    },
+
     {
         path: "*",
         redirect: "/index"

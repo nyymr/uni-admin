@@ -38,5 +38,13 @@ export default {
     //删除用户信息
     removeUserInfo() {
         METHODS.removeLocalStorage(KEY.USERINFO);
+    },
+    //保存用户页面权限
+    saveRule(val) {
+        METHODS.setSessionStorage(KEY.RULE, val);
+    },
+    //读取用户页面权限数据
+    readRule() {
+        return METHODS.getSessionStorage(KEY.RULE);
     }
 }
