@@ -1,6 +1,5 @@
 // 导入axios对象
 import axios from "axios"
-import store from "../store"
 import { Loading } from 'element-ui';
 const loading = {
     LoadingService: null,

@@ -28,6 +28,22 @@ export default {
                 ischeck
             }
         })
+    },
+    //批量上架接口
+    changestatus(ids, status) {
+        return request({
+            url: "/admin/goods/changestatus",
+            method: "POST",
+            data: {
+                ids, status
+            }
+        })
+    },
+    //获取商品分类接口
+    categoryData() {
+        return request({
+            url: "/admin/category",
+            method: "GET"
+        })
     }
-
 }

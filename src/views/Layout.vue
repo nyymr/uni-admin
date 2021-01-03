@@ -151,13 +151,14 @@ export default {
   right: 0;
   bottom: 0;
   top: 0;
-  overflow: hidden;
+  // overflow: hidden;
   section {
     height: 100%;
   }
 }
 .layout-main {
   position: relative;
+  overflow: auto;
   > div {
     &:nth-child(2) {
       position: absolute;

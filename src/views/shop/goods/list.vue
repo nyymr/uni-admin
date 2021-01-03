@@ -12,17 +12,53 @@
         </el-tabs>
       </header>
       <main>
-        <!-- 表单 -->
         <header class="d-flex align-items-center justify-content-between">
+          <!-- 按钮组 -->
           <div class="buttons">
             <el-button size="mini" type="success">发布商品</el-button>
-            <el-button size="mini" type="danger" @click="openRemoveAll"
+            <el-button
+              size="mini"
+              v-show="tab != 'delete'"
+              type="danger"
+              @click="openRemoveAll"
               >批量删除</el-button
             >
-            <el-button size="mini">上架</el-button>
-            <el-button size="mini">下架</el-button>
+            <el-button size="mini" v-show="tab == 'delete'" type="warning"
+              >恢复商品</el-button
+            >
+            <el-button size="mini" v-show="tab == 'delete'" type="danger"
+              >彻底删除</el-button
+            >
+            <el-button
+              size="mini"
+              v-show="
+                tab != 'delete' &&
+                tab != 'min_stock' &&
+                tab != 'checking' &&
+                tab != 'saling'
+              "
+              @click="changeStatus(1)"
+              >上架</el-button
+            >
+            <el-button
+              size="mini"
+              v-show="
+                tab != 'delete' &&
+                tab != 'min_stock' &&
+                tab != 'checking' &&
+                tab != 'off'
+              "
+              @click="changeStatus(0)"
+              >下架</el-button
+            >
           </div>
-          <el-form :inline="true" :model="searchMap" class="demo-form-inline">
+          <!-- 表单 -->
+          <el-form
+            v-show="!deepSearchShow"
+            :inline="true"
+            :model="searchMap"
+            class="demo-form-inline"
+          >
             <el-form-item>
               <el-input
                 v-model="searchMap.title"
@@ -34,10 +70,71 @@
               <el-button type="info" size="mini" @click="getTableData"
                 >搜索</el-button
               >
-              <el-button size="mini">高级搜索</el-button>
+              <el-button size="mini" @click="deepSearchShow = true"
+                >高级搜索</el-button
+              >
             </el-form-item>
           </el-form>
         </header>
+        <!-- 高级搜索 -->
+        <el-card v-show="deepSearchShow" class="box-card bg-light">
+          <div slot="header" class="clearfix">
+            <span>高级搜索</span>
+            <el-button
+              style="float: right; padding: 3px 0; color: #007373"
+              type="text"
+              @click="deepSearchShow = false"
+              >收起</el-button
+            >
+          </div>
+          <div class="text item">
+            <el-form
+              :inline="true"
+              label-width="100px"
+              :model="searchMap"
+              class="demo-form-inline"
+              ref="searchForm"
+            >
+              <el-form-item label="商品名称" prop="title">
+                <el-input
+                  v-model="searchMap.title"
+                  placeholder="商品名称"
+                  size="mini"
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="商品分类" prop="category">
+                <el-select
+                  v-model="searchMap.category"
+                  placeholder="请选择商品分类"
+                  size="mini"
+                >
+                  <el-option
+                    v-for="(i, index) in categoryData"
+                    :label="i.name"
+                    :value="i.category_id"
+                    :key="index"
+                  >
+                    <!-- <template slot="—">
+                      <el-option
+                        v-for="(item, index) in i.children"
+                        :key="index"
+                        :label="item.name"
+                        :value="item.category_id"
+                      >
+                      </el-option>
+                    </template> -->
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="info" size="mini" @click="getTableData"
+                  >搜索</el-button
+                >
+                <el-button size="mini" @click="reset">清空筛选条件</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
+        </el-card>
         <!-- 表格 -->
         <el-table
           @selection-change="handleSelectionChange"
@@ -174,8 +271,10 @@ export default {
     return {
       tab: "all",
       //搜索数据
+      deepSearchShow: false,
       searchMap: {
         title: "",
+        category: "",
       },
       //表格数据
       tableData: [],
@@ -187,10 +286,13 @@ export default {
       },
       //批量删除id数组
       removeIds: [],
+      //分类数据
+      categoryData: [],
     };
   },
   created() {
     this.getTableData();
+    this.getCategoryData();
   },
   methods: {
     //获取表格数据
@@ -207,6 +309,23 @@ export default {
           if (res.msg == "ok") {
             this.tableData = res.data.list;
             this.paging.total = res.data.totalCount;
+          }
+        })
+        .catch((err) => {
+          this.$message({
+            message: err,
+            type: "error",
+          });
+        });
+    },
+    //获取商品分类列表
+    getCategoryData() {
+      api
+        .categoryData()
+        .then((res) => {
+          console.log(res);
+          if (res.msg == "ok") {
+            this.categoryData = res.data;
           }
         })
         .catch((err) => {
@@ -241,6 +360,13 @@ export default {
     },
     //打开批量删除弹框
     openRemoveAll() {
+      if (!this.removeIds.length) {
+        this.$message({
+          type: "error",
+          message: "请先选中需要上传的信息",
+        });
+        return;
+      }
       this.$confirm("此操作将永久删除选中的商品, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -296,6 +422,28 @@ export default {
           });
         });
     },
+    //批量上架，下架
+    changeStatus(status) {
+      api
+        .changestatus(this.removeIds, status)
+        .then((res) => {
+          if (res.msg == "ok") {
+            this.$message.success("操作成功");
+            this.removeIds = [];
+            this.getTableData();
+          }
+        })
+        .catch((err) => {
+          this.$message({
+            message: err,
+            type: "error",
+          });
+        });
+    },
+    //重置搜索表单
+    reset() {
+      this.$refs["searchForm"].resetFields();
+    },
   },
 };
 </script>
@@ -303,7 +451,7 @@ export default {
 .shop_goods_list {
   position: relative;
   .el-form {
-    height: 28px;
+    height: 40px;
     .el-form-item {
       margin-right: 10px;
       margin-bottom: 0px;
@@ -311,6 +459,18 @@ export default {
         background-color: red;
       }
     }
+  }
+
+  .box-card {
+    margin: 16px 0;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+  }
+  .box-card /deep/ .el-card__header {
+    padding: 8px 10px;
+  }
+  .box-card /deep/ .el-card__body {
+    padding: 20px;
   }
   > section {
     height: 100%;

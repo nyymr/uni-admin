@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 export default {
     //获取相册分类列表的分页数据
-    albumList(page, limit) {
+    getAlbumList(page, limit) {
         return request({
             url: `/admin/imageclass/${page}?limit=${limit}`,
             method: 'GET',

@@ -14,6 +14,6 @@
   align-items: center;
   padding: 0 20px;
   box-sizing: border-box;
-  background-color: #fff;;
+  background-color: #fff;
 }
 </style>
